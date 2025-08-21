@@ -94,3 +94,13 @@ npm run deploy
 Лицензия
 ![alt text](image.png)
 Проект лицензирован по лицензии MIT - см. ЛИЦЕНЗИЯ Файл для получения подробной информации.
+
+Если выдает ошибку, то в корне создайте файл vite.config.js:
+import { defineConfig } from 'vite'
+export default defineConfig({
+  root: 'src',
+  base: '/',
+  build: {
+    outDir: '../dist'
+  }
+})
