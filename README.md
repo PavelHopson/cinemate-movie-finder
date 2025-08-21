@@ -62,16 +62,20 @@ npm run build
 В результате появится папка dist с готовыми файлами.
 Деплой на GitHub Pages
 1. Обновите package.json с вашими данными репозитория:
+```bash
 "homepage": "https://github.com/PavelHopson/cinemate-movie-finder.git"
+```
 2. Устанавливаем gh-pages:
 ```bash
 npm install gh-pages --save-dev
 ```
 3. Добавляем скрипты деплоя в package.json:
+```bash
 "scripts": {
   "predeploy": "npm run build",
   "deploy": "gh-pages -d dist"
 }
+```
 4. Деплой:
 ```bash
 npm run deploy
@@ -96,6 +100,7 @@ npm run deploy
 Проект лицензирован по лицензии MIT - см. ЛИЦЕНЗИЯ Файл для получения подробной информации.
 
 Если выдает ошибку, то в корне создайте файл vite.config.js:
+```bash
 import { defineConfig } from 'vite'
 export default defineConfig({
   root: 'src',
@@ -104,3 +109,4 @@ export default defineConfig({
     outDir: '../dist'
   }
 })
+```
