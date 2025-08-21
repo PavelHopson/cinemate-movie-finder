@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineMate - Find your movies</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="light-theme">
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="logo">CineMate</h1>
+        <div class="header-controls">
+          <button id="theme-toggle" class="icon-button" aria-label="Toggle dark mode">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          </button>
+          <a href="#favorites" id="favorites-link" class="icon-button" aria-label="View favorites">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span id="favorites-count" class="badge">0</span>
+          </a>
+        </div>
+      </div>
+      
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Search movies..." 
+          aria-label="Search movies"
+        >
+        <button id="search-button" class="search-button" aria-label="Search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      
+      <div id="network-status" class="network-status offline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wifi-off"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.458a9 9 0 0 1 14 0"/><path d="M2 8.5a12 12 0 0 1 20 0"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+        <span>API недоступен. Работа в офлайн-режиме</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main container">
+    <section id="search-results" class="results-section active">
+      <h2 class="section-title">Search Results</h2>
+      <div id="results-container" class="results-container"></div>
+    </section>
+    
+    <section id="favorites-section" class="results-section">
+      <h2 class="section-title">Your Favorites</h2>
+      <div id="favorites-container" class="results-container"></div>
+    </section>
+    
+    <section id="movie-details" class="results-section">
+      <button id="back-button" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to results
+      </button>
+      <div id="movie-details-container" class="movie-details-container"></div>
+    </section>
+  </main>
+
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading movies...</p>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>CineMate &copy; 2023 | Using TMDB API</p>
+      <p class="offline-note">Работает в офлайн-режиме</p>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
