@@ -1,99 +1,242 @@
-// Работа с OMDb API
-export const API = {
-  // Получаем API ключ из переменной окружения
-  API_KEY: import.meta.env.VITE_OMDB_API_KEY || 'YOUR_OMDB_API_KEY',
-  BASE_URL: 'https://www.omdbapi.com',
+import { ThemeManager } from './theme.js';
+import { FavoritesManager } from './favorites.js';
+import { OfflineManager } from './offline.js';
+import { API } from './api.js';
+import { UI } from './ui.js';
+
+// Глобальная переменная для хранения текущих фильмов
+let currentMovies = [];
+
+// Инициализация приложения
+document.addEventListener('DOMContentLoaded', () => {
+  // Инициализируем менеджеры
+  ThemeManager.init();
+  OfflineManager.init();
+  FavoritesManager.init();
   
-  async fetchFromAPI(params = {}) {
-    // Проверяем, установлен ли API ключ
-    if (!this.API_KEY || this.API_KEY === 'YOUR_OMDB_API_KEY') {
-      console.warn('OMDb API key is not set. Please create a .env file with VITE_OMDB_API_KEY.');
-      throw new Error('API key is missing. Please set up your OMDb API key.');
+  // Настройка поиска с debounce
+  const searchInput = document.getElementById('search-input');
+  const searchButton = document.getElementById('search-button');
+  const searchClear = document.getElementById('search-clear');
+  const suggestions = document.getElementById('suggestions');
+  const closeSuggestions = document.querySelector('.close-suggestions');
+  
+  let searchTimeout = null;
+  
+  const performSearch = async () => {
+    const query = searchInput.value.trim();
+    
+    if (!query) {
+      // Скрываем подсказки при пустом запросе
+      suggestions.hidden = true;
+      
+      // Если запрос пустой, показываем популярные фильмы
+      try {
+        UI.showLoading();
+        const data = await API.getPopularMovies();
+        currentMovies = data.results || [];
+        
+        // Применяем сортировку
+        const sortBy = document.getElementById('sort-by')?.value || 'relevance';
+        const sortedMovies = UI.sortMovies(currentMovies, sortBy);
+        UI.renderMovies(sortedMovies);
+      } catch (error) {
+        console.error('Error fetching popular movies:', error);
+        
+        // Пытаемся использовать офлайн-данные
+        try {
+          const movies = OfflineManager.getMovies();
+          currentMovies = movies;
+          
+          // Применяем сортировку
+          const sortBy = document.getElementById('sort-by')?.value || 'relevance';
+          const sortedMovies = UI.sortMovies(currentMovies, sortBy);
+          UI.renderMovies(sortedMovies);
+          
+          UI.showError('Используем офлайн-данные. Некоторые функции могут быть ограничены.');
+        } catch (offlineError) {
+          UI.showError('Не удалось загрузить фильмы. Проверьте подключение.');
+        }
+      } finally {
+        UI.hideLoading();
+      }
+      return;
     }
     
-    const url = new URL(this.BASE_URL);
-    url.search = new URLSearchParams({
-      ...params,
-      apikey: this.API_KEY
-    });
-    
     try {
-      const response = await fetch(url);
+      UI.showLoading();
+      suggestions.hidden = true;
       
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
+      if (!OfflineManager.isOnline) {
+        // В офлайн-режиме ищем в локальных данных
+        const movies = OfflineManager.getMovies();
+        const results = movies.filter(movie => 
+          movie.Title.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        currentMovies = results;
+        
+        // Применяем сортировку
+        const sortBy = document.getElementById('sort-by')?.value || 'relevance';
+        const sortedMovies = UI.sortMovies(currentMovies, sortBy);
+        UI.renderMovies(sortedMovies);
+      } else {
+        // В онлайн-режиме используем API
+        const data = await API.searchMovies(query);
+        currentMovies = data.results || [];
+        
+        // Применяем сортировку
+        const sortBy = document.getElementById('sort-by')?.value || 'relevance';
+        const sortedMovies = UI.sortMovies(currentMovies, sortBy);
+        UI.renderMovies(sortedMovies);
       }
-      
-      const data = await response.json();
-      
-      // Проверяем, есть ли ошибка в ответе от OMDb
-      if (data.Response === "False") {
-        throw new Error(data.Error || "API returned an error");
-      }
-      
-      return data;
-    } catch (error) {
-      console.error('API error:', error);
-      throw error;
-    }
-  },
-  
-  async searchMovies(query, page = 1) {
-    if (!query.trim()) return { Search: [], totalResults: 0, Response: "True" };
-    
-    try {
-      const data = await this.fetchFromAPI({
-        s: query,
-        page: page,
-        type: 'movie'
-      });
-      
-      // OMDb возвращает результаты в поле Search
-      return {
-        results: data.Search || [],
-        total_results: parseInt(data.totalResults) || 0
-      };
     } catch (error) {
       console.error('Search error:', error);
-      throw error;
-    }
-  },
-  
-  async getMovieDetails(imdbID) {
-    try {
-      const data = await this.fetchFromAPI({
-        i: imdbID,
-        plot: 'full'
-      });
-      return data;
-    } catch (error) {
-      console.error('Movie details error:', error);
-      throw error;
-    }
-  },
-  
-  async getPopularMovies(page = 1) {
-    try {
-      // OMDb не имеет метода для получения популярных фильмов, поэтому используем поиск по пустому запросу
-      // или получаем популярные фильмы из fallback данных
-      if (page === 1) {
-        return {
-          results: [
-            { Title: "The Shawshank Redemption", Year: "1994", imdbID: "tt0111161", Type: "movie", Poster: "https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDE2LWViOTQtOGU0Yj FiNzdiNWE3Y2FmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
-            { Title: "The Godfather", Year: "1972", imdbID: "tt0068646", Type: "movie", Poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg" },
-            { Title: "The Dark Knight", Year: "2008", imdbID: "tt0468569", Type: "movie", Poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg" },
-            { Title: "12 Angry Men", Year: "1957", imdbID: "tt0050083", Type: "movie", Poster: "https://m.media-amazon.com/images/M/MV5BMWU4N25jiTk1M19kLWJiM2YtY2ZjYTY3YjRlNGJjNGFiZmJjY2NlNzNkYWJhNmU0NGNjNDJmMjNlXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SX300.jpg" },
-            { Title: "Schindler's List", Year: "1993", imdbID: "tt0108052", Type: "movie", Poster: "https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UWMGM3NTJkXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg" },
-            { Title: "The Lord of the Rings: The Return of the King", Year: "2003", imdbID: "tt0167260", Type: "movie", Poster: "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQX5BNzkwMTM5MTE2.jpg" }
-          ],
-          total_results: 6
-        };
-      } else {
-        return { results: [], total_results: 0 };
+      UI.showError('Поиск не удался. Попробуйте снова.');
+      
+      // Пытаемся использовать офлайн-данные для поиска
+      try {
+        const movies = OfflineManager.getMovies();
+        const results = movies.filter(movie => 
+          movie.Title.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        currentMovies = results;
+        
+        // Применяем сортировку
+        const sortBy = document.getElementById('sort-by')?.value || 'relevance';
+        const sortedMovies = UI.sortMovies(currentMovies, sortBy);
+        UI.renderMovies(sortedMovies);
+        
+        UI.showError('Используем офлайн-данные для поиска. Результаты могут быть ограничены.');
+      } catch (offlineError) {
+        console.error('Offline search failed:', offlineError);
       }
-    } catch (error) {
-      console.error('Popular movies error:', error);
-      throw error;
+    } finally {
+      UI.hideLoading();
     }
+  };
+  
+  const showSuggestions = () => {
+    if (searchInput.value.trim() === '') {
+      suggestions.hidden = false;
+    }
+  };
+  
+  const debouncedSearch = () => {
+    clearTimeout(searchTimeout);
+    const query = searchInput.value.trim();
+    
+    if (query === '') {
+      suggestions.hidden = false;
+    } else {
+      suggestions.hidden = true;
+      searchTimeout = setTimeout(performSearch, 300); // 300ms debounce
+    }
+  };
+  
+  // Добавляем обработчики событий
+  if (searchInput) {
+    searchInput.addEventListener('input', debouncedSearch);
+    searchInput.addEventListener('focus', showSuggestions);
   }
-};
+  
+  if (searchButton) {
+    searchButton.addEventListener('click', performSearch);
+  }
+  
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      suggestions.hidden = false;
+      searchInput.focus();
+      debouncedSearch();
+    });
+  }
+  
+  // Обработчик для подсказок
+  document.querySelectorAll('.suggestion-item').forEach(item => {
+    item.addEventListener('click', () => {
+      searchInput.value = item.textContent;
+      suggestions.hidden = true;
+      performSearch();
+    });
+  });
+  
+  if (closeSuggestions) {
+    closeSuggestions.addEventListener('click', () => {
+      suggestions.hidden = true;
+    });
+  }
+  
+  // Переключение табов
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Скрываем все секции
+      document.querySelectorAll('.results-section').forEach(section => {
+        section.classList.remove('active');
+        section.hidden = true;
+      });
+      
+      // Скрываем табы
+      document.querySelectorAll('.tab').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      
+      // Показываем выбранную секцию
+      const tabId = tab.dataset.tab;
+      const section = document.getElementById(tabId);
+      if (section) {
+        section.classList.add('active');
+        section.hidden = false;
+      }
+      
+      // Активируем таб
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      
+      // Если это таб "Избранное", отображаем фильмы
+      if (tabId === 'favorites-section') {
+        FavoritesManager.renderFavorites();
+      }
+    });
+  });
+  
+  // Обработчик для кнопки "Очистить всё" в избранном
+  const clearFavorites = document.getElementById('clear-favorites');
+  if (clearFavorites) {
+    clearFavorites.addEventListener('click', () => {
+      if (confirm('Вы уверены, что хотите удалить все фильмы из избранного?')) {
+        localStorage.removeItem('movie-favorites');
+        FavoritesManager.updateFavoritesCount();
+        FavoritesManager.renderFavorites();
+        UI.showToast('Все фильмы удалены из избранного');
+      }
+    });
+  }
+  
+  // Обработчик сортировки
+  const sortBySelect = document.getElementById('sort-by');
+  if (sortBySelect) {
+    sortBySelect.addEventListener('change', () => {
+      // Применяем сортировку к текущим фильмам
+      const sortBy = sortBySelect.value;
+      const sortedMovies = UI.sortMovies(currentMovies, sortBy);
+      UI.renderMovies(sortedMovies);
+    });
+  }
+  
+  // Добавляем обработчик для Enter
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+  }
+  
+  // При загрузке показываем популярные фильмы
+  UI.renderSkeletons();
+  performSearch();
+});
