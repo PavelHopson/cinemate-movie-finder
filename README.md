@@ -1,6 +1,9 @@
 # CineMate — современное SPA для поиска фильмов
 
-![Скриншот 
+<img width="1894" height="949" alt="image" src="https://github.com/user-attachments/assets/a037b313-26b4-4985-8f20-6959881ffc49" />
+
+<img width="1891" height="946" alt="image" src="https://github.com/user-attachments/assets/be4e4050-161c-4a7b-9ed4-0166a767fde4" />
+
 
 CineMate — это современное одностраничное приложение (SPA) для поиска информации о фильмах с использованием **OMDb API**. Приложение адаптивное, поддерживает светлую и тёмную тему, работает с избранными фильмами и оффлайн-режимом.
 
