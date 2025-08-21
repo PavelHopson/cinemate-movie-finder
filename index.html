@@ -3,76 +3,219 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CineMate - Modern movie search application with offline support">
   <title>CineMate - Find your movies</title>
+  
+  <!-- Подключаем современные шрифты -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+  
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body class="light-theme">
-  <header class="header">
-    <div class="container">
-      <div class="header-content">
-        <h1 class="logo">CineMate</h1>
-        <div class="header-controls">
-          <button id="theme-toggle" class="icon-button" aria-label="Toggle dark mode">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-          </button>
-          <a href="#favorites" id="favorites-link" class="icon-button" aria-label="View favorites">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <span id="favorites-count" class="badge">0</span>
+  <div class="app-container">
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <a href="/" class="logo-link">
+            <h1 class="logo">CineMate</h1>
           </a>
+          <div class="header-controls">
+            <button id="theme-toggle" class="icon-button" aria-label="Toggle dark mode">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon sun-icon">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon moon-icon">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </button>
+            <a href="#favorites" id="favorites-link" class="icon-button" aria-label="View favorites">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span id="favorites-count" class="badge">0</span>
+            </a>
+          </div>
+        </div>
+        
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input 
+              type="text" 
+              id="search-input" 
+              class="search-input" 
+              placeholder="Find movies, actors, directors..." 
+              aria-label="Search movies"
+              autocomplete="off"
+            >
+            <button id="search-clear" class="search-clear" aria-label="Clear search">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <button id="search-button" class="search-button" aria-label="Search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div id="network-status" class="network-status offline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wifi-off">
+            <path d="M12 20h.01"/>
+            <path d="M8.5 16.429a5 5 0 0 1 7 0"/>
+            <path d="M5 12.458a9 9 0 0 1 14 0"/>
+            <path d="M2 8.5a12 12 0 0 1 20 0"/>
+            <line x1="2" x2="22" y1="2" y2="22"/>
+          </svg>
+          <span>API недоступен. Работа в офлайн-режиме</span>
         </div>
       </div>
-      
-      <div class="search-container">
-        <input 
-          type="text" 
-          id="search-input" 
-          class="search-input" 
-          placeholder="Search movies..." 
-          aria-label="Search movies"
-        >
-        <button id="search-button" class="search-button" aria-label="Search">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </header>
+
+    <main class="main container">
+      <div class="tabs">
+        <button class="tab active" data-tab="search-results">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Поиск
+        </button>
+        <button class="tab" data-tab="favorites-section">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          Избранное
         </button>
       </div>
       
-      <div id="network-status" class="network-status offline">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wifi-off"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.458a9 9 0 0 1 14 0"/><path d="M2 8.5a12 12 0 0 1 20 0"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
-        <span>API недоступен. Работа в офлайн-режиме</span>
+      <div class="content-wrapper">
+        <section id="search-results" class="results-section active">
+          <div class="section-header">
+            <h2 class="section-title">Результаты поиска</h2>
+            <div class="sort-container">
+              <label for="sort-by">Сортировать по:</label>
+              <select id="sort-by" class="sort-select">
+                <option value="relevance">Релевантности</option>
+                <option value="year">Году</option>
+                <option value="rating">Рейтингу</option>
+              </select>
+            </div>
+          </div>
+          <div id="results-container" class="results-container"></div>
+        </section>
+        
+        <section id="favorites-section" class="results-section">
+          <div class="section-header">
+            <h2 class="section-title">Ваше избранное</h2>
+            <button id="clear-favorites" class="clear-favorites-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+              Очистить всё
+            </button>
+          </div>
+          <div id="favorites-container" class="results-container"></div>
+        </section>
+        
+        <section id="movie-details" class="results-section">
+          <button id="back-button" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left">
+              <line x1="19" x2="5" y1="12" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Назад к результатам
+          </button>
+          <div id="movie-details-container" class="movie-details-container"></div>
+        </section>
       </div>
+      
+      <div class="suggestions" id="suggestions">
+        <div class="suggestions-header">
+          <h3>Популярные запросы</h3>
+          <button class="close-suggestions">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="suggestions-list">
+          <button class="suggestion-item">Inception</button>
+          <button class="suggestion-item">The Matrix</button>
+          <button class="suggestion-item">Interstellar</button>
+          <button class="suggestion-item">The Dark Knight</button>
+          <button class="suggestion-item">Pulp Fiction</button>
+          <button class="suggestion-item">The Godfather</button>
+        </div>
+      </div>
+    </main>
+
+    <div id="loading" class="loading">
+      <div class="loading-spinner">
+        <div class="loading-spinner-inner"></div>
+      </div>
+      <p>Загружаем фильмы...</p>
     </div>
-  </header>
 
-  <main class="main container">
-    <section id="search-results" class="results-section active">
-      <h2 class="section-title">Search Results</h2>
-      <div id="results-container" class="results-container"></div>
-    </section>
-    
-    <section id="favorites-section" class="results-section">
-      <h2 class="section-title">Your Favorites</h2>
-      <div id="favorites-container" class="results-container"></div>
-    </section>
-    
-    <section id="movie-details" class="results-section">
-      <button id="back-button" class="back-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Back to results
-      </button>
-      <div id="movie-details-container" class="movie-details-container"></div>
-    </section>
-  </main>
+    <div id="toast" class="toast"></div>
 
-  <div id="loading" class="loading">
-    <div class="spinner"></div>
-    <p>Loading movies...</p>
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h2>CineMate</h2>
+            <p>Ваш надежный помощник в мире кино</p>
+          </div>
+          
+          <div class="footer-links">
+            <h3>Проект</h3>
+            <ul>
+              <li><a href="https://github.com/PavelHopson/cinemate-movie-finder" target="_blank">GitHub Repository</a></li>
+              <li><a href="#features">Возможности</a></li>
+              <li><a href="#about">О проекте</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-links">
+            <h3>API</h3>
+            <ul>
+              <li><a href="https://www.omdbapi.com/" target="_blank">OMDb API</a></li>
+              <li><a href="https://www.omdbapi.com/apikey.aspx" target="_blank">Получить API ключ</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>CineMate &copy; 2025 | Using OMDb API</p>
+          <div class="footer-note">
+            <p class="offline-note">Работает в офлайн-режиме</p>
+            <p class="api-status">API: <span id="api-status-indicator" class="status-indicator offline"></span></p>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
-
-  <footer class="footer">
-    <div class="container">
-      <p>CineMate &copy; 2023 | Using TMDB API</p>
-      <p class="offline-note">Работает в офлайн-режиме</p>
-    </div>
-  </footer>
 
   <script type="module" src="/js/app.js"></script>
 </body>
