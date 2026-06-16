@@ -1,7 +1,7 @@
 name: Deploy to VPS (eclipse-forge.ru)
 
-# Сборка фронта + rsync dist на VPS (Caddy отдаёт /var/www/cryptopulse).
-# Секреты: VPS_SSH_KEY (deploy-ключ), VPS_HOST, VPS_USER, VPS_PATH.
+# Сборка фронта + rsync dist на VPS. npm install (без lock-зависимости).
+# Секреты: VPS_SSH_KEY, VPS_HOST, VPS_USER, VPS_PATH.
 
 on:
   push:
@@ -24,11 +24,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+        run: npm install
 
       - name: Build
         run: npm run build
