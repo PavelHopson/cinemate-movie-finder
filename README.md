@@ -1,18 +1,45 @@
-# CineMate -- Movie Finder
+# CineMate
 
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![Vite](https://img.shields.io/badge/Vite-4.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![OMDb API](https://img.shields.io/badge/OMDb_API-integrated-E50914?style=flat-square)](https://www.omdbapi.com/)
-[![License: MIT](https://img.shields.io/github/license/PavelHopson/cinemate-movie-finder?style=flat-square)](LICENSE.md)
-[![GitHub Pages](https://img.shields.io/badge/Demo-GitHub_Pages-181717?style=flat-square&logo=github)](https://pavelhopson.github.io/cinemate-movie-finder)
+![CineMate: Поиск → Фильм → Подробности](docs/assets/repository-cover.svg)
 
-Современное одностраничное приложение (SPA) для поиска фильмов с рейтингами и описаниями. Использует OMDb API, поддерживает светлую/темную тему, избранное и оффлайн-режим.
+**Поиск фильмов.** Веб-приложение поиска и просмотра информации о фильмах с OMDb.
 
-<img width="1894" height="949" alt="CineMate главная" src="https://github.com/user-attachments/assets/a037b313-26b4-4985-8f20-6959881ffc49" />
+<!-- repository-guide:start -->
+[Первый запуск](#readme-start) · [Что внутри](#readme-map) · [Путеводитель](docs/repository-guide.md#start) · [Карта кода](docs/repository-guide.md#map) · [Проверки](docs/repository-guide.md#checks) · [Границы и права](docs/repository-guide.md#boundaries)
 
-<img width="1891" height="946" alt="CineMate карточка фильма" src="https://github.com/user-attachments/assets/be4e4050-161c-4a7b-9ed4-0166a767fde4" />
+<a id="readme-map"></a>
 
----
+## Проект за минуту
+
+- **[Поиск и интерфейс](<src/js>)** — Поведение каталога и работа с внешним API.
+- **[Данные](<src/data>)** — Локальные ресурсы приложения.
+- **[Оформление](<src/css>)** — Стили экранов каталога.
+
+<a id="readme-start"></a>
+
+## Начать локально
+
+**Среда:** Node.js и npm. **Источник:** [package.json](<package.json>).
+
+Из корня клонированного репозитория:
+
+```bash
+npm ci
+npm run dev
+```
+
+Запуск сервера разработки не выполняет публикацию. Проверьте настройки окружения и основной пользовательский сценарий перед выпуском.
+
+<details>
+<summary><strong>Перед первым запуском и изменением кода</strong></summary>
+
+- Команды сверены с исходниками 8 сентября 2026. Это инструкция, а не отметка об успешном запуске или текущем production.
+- Установка зависимостей может обращаться в registry и выполнять lifecycle scripts. Используйте отдельную рабочую среду и демонстрационные данные.
+- Каталог зависит от доступности и лимитов внешнего API; ключ не следует публиковать вместе с демонстрацией.
+
+
+</details>
+<!-- repository-guide:end -->
 
 ## Демо
 
