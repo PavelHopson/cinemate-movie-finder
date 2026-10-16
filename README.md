@@ -1,5 +1,9 @@
 # CineMate
 
+<!-- project-links:start -->
+[Открыть веб-версию](https://pavelhopson.github.io/cinemate-movie-finder/) · [Документация](docs/repository-guide.md) · [Код](https://github.com/PavelHopson/cinemate-movie-finder/tree/main) · [История изменений](https://github.com/PavelHopson/cinemate-movie-finder/commits/main/)
+<!-- project-links:end -->
+
 ![CineMate: Поиск → Фильм → Подробности](docs/assets/repository-cover.svg)
 
 **Поиск фильмов.** Веб-приложение поиска и просмотра информации о фильмах с OMDb.
