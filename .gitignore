@@ -2,3 +2,6 @@ node_modules
 dist
 .cache
 .env
+desktop/**/bin/
+desktop/**/obj/
+desktop/TestArtifacts/

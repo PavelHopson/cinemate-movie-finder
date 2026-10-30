@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "desktop:build": "dotnet build desktop/CineMate.Desktop.sln -c Release",
+    "desktop:test": "dotnet run --project desktop/CineMate.Core.Tests/CineMate.Core.Tests.csproj -c Release",
+    "desktop:publish": "dotnet publish desktop/CineMate.Desktop/CineMate.Desktop.csproj -c Release -r win-x64 --self-contained true",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },

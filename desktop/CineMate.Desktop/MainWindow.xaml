@@ -1,0 +1,97 @@
+<Window x:Class="CineMate.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="CineMate — личная фильмотека"
+        Width="1120" Height="720" MinWidth="820" MinHeight="560"
+        WindowStartupLocation="CenterScreen">
+  <Grid Background="{StaticResource VoidBrush}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="28,22">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+          <TextBlock Text="CineMate" FontSize="26" FontWeight="Bold" />
+          <TextBlock Text="Личная фильмотека на этом компьютере" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,0" />
+        </StackPanel>
+        <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Click="AddVideo_Click"
+                Content="Добавить видео" AutomationProperties.Name="Добавить видео в личную фильмотеку" />
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1" Margin="28,24">
+      <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="430">
+        <Border Width="72" Height="72" CornerRadius="18" Background="{StaticResource SurfaceRaisedBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,0,20">
+          <Path Data="M 0 0 L 18 11 L 0 22 Z" Fill="{StaticResource AccentBrush}" Width="18" Height="22" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <TextBlock Text="Добавьте первый фильм" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" />
+        <TextBlock Text="Выберите свой видеофайл. CineMate сохранит его только в локальной фильмотеке и запомнит место просмотра."
+                   TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Margin="0,10,0,22" />
+        <Button Style="{StaticResource PrimaryButton}" Click="AddVideo_Click" Content="Выбрать видеофайл"
+                AutomationProperties.Name="Выбрать первый видеофайл" />
+      </StackPanel>
+
+      <ListBox x:Name="LibraryList" Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+               AutomationProperties.Name="Личная фильмотека" SelectionMode="Single">
+        <ListBox.ItemContainerStyle>
+          <Style TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+          </Style>
+        </ListBox.ItemContainerStyle>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="18">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="56" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border Width="44" Height="44" CornerRadius="10" Background="{StaticResource SurfaceRaisedBrush}" VerticalAlignment="Top">
+                  <Path Data="M 0 0 L 12 8 L 0 16 Z" Fill="{StaticResource AccentBrush}" Width="12" Height="16" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Grid.Column="1" Margin="4,0,22,0">
+                  <TextBlock Text="{Binding Title}" FontSize="17" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                  <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <TextBlock Text="{Binding AvailabilityText}" Foreground="{StaticResource MutedTextBrush}" />
+                    <TextBlock Text=" · " Foreground="{StaticResource MutedTextBrush}" />
+                    <TextBlock Text="{Binding ProgressText}" Foreground="{StaticResource MutedTextBrush}" />
+                  </StackPanel>
+                  <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Maximum="100" Height="4" Margin="0,12,0,0"
+                               Foreground="{StaticResource AccentBrush}" Background="{StaticResource BorderBrush}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Button Style="{StaticResource PrimaryButton}" Content="Смотреть" Tag="{Binding}" Click="OpenVideo_Click" Margin="0,0,8,0"
+                          AutomationProperties.Name="Открыть видео" />
+                  <Button Style="{StaticResource SecondaryButton}" Content="Найти файл" Tag="{Binding}" Click="RelinkVideo_Click" Margin="0,0,8,0"
+                          AutomationProperties.Name="Указать новое расположение файла" />
+                  <Button Style="{StaticResource SecondaryButton}" Content="Удалить" Tag="{Binding}" Click="RemoveVideo_Click"
+                          AutomationProperties.Name="Удалить видео из фильмотеки" />
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+
+    <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="28,12">
+      <TextBlock x:Name="StatusText" Text="Файлы остаются на вашем компьютере" Foreground="{StaticResource MutedTextBrush}"
+                 TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+    </Border>
+  </Grid>
+</Window>
